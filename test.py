@@ -1,4 +1,5 @@
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+import cryptography
 import sqlite3 as sqlite
 import os
 
@@ -24,8 +25,12 @@ def verify(salt, hash, password):
         p=1,
     )
     password = bytes(password, encoding="utf8")
-    hash = kdf.verify(password, hash)
-    return salt, hash
+    correct = True
+    try:
+        kdf.verify(password, hash)
+    except cryptography.exceptions.InvalidKey:
+        correct = False
+    return correct
 
 
 print(genhashsalt(input("password")))
