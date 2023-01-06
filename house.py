@@ -39,7 +39,7 @@ class House:
 
 
 
-
-x = House.get_from_db(1)
-y = House(square_meter=4, occupants=1, address="29E Herbert Street",level=0)
-y.enroll_into_db()
+if __name__ == "__main__":
+    x = House.get_from_db(1)
+    y = House(square_meter=4, occupants=1, address="29E Herbert Street",level=0)
+    y.enroll_into_db()
