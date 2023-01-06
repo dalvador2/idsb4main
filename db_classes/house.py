@@ -1,5 +1,4 @@
 import sqlite3
-import pandas as pd
 
 class House:
     DBNAME = "isdp4.db"
