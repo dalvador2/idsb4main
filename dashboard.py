@@ -15,7 +15,8 @@ user = db_classes.User.get_from_db("torin")
 user.get_house()
 df = user.house.get_data()
 
-fig = px.bar(df, x=df.index, y="usage")
+fig1 = px.bar(df, x=df.index, y="usage")
+fig2 = px.bar(df,x=df.index, y="generation")
 
 app.layout = html.Div(children=[
     html.H1(children='Hello Dash'),
@@ -27,18 +28,24 @@ app.layout = html.Div(children=[
     html.Button("Log in", id = "submit_button", n_clicks=0),
     dcc.Graph(
         id='Usage',
-        figure=fig
+        figure=fig1
+    ),
+    dcc.Graph(
+        id="generation",
+        figure=fig2
     )
 ])
 @app.callback(Output(component_id="Usage", component_property= "figure"),
+    Output(component_id="generation", component_property="figure"),
     Input(component_id="submit_button", component_property="n_clicks"),
     State(component_id="user_input",component_property="value"))
 def update_usage(_,user_name):
     user = db_classes.User.get_from_db(user_name)
     user.get_house()
     df = user.house.get_data()
-    fig = px.bar(df, x=df.index, y="usage")
-    return fig
+    fig1 = px.bar(df, x=df.index, y="usage")
+    fig2 = px.bar(df, x=df.index, y = "generation")
+    return fig1, fig2
 
 if __name__ == '__main__':
     app.run_server(debug=True)
