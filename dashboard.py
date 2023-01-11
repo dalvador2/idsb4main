@@ -11,14 +11,11 @@ server = flask.Flask(__name__)
 
 app = Dash(__name__, server= server)
 
+user = db_classes.User.get_from_db("torin")
+user.get_house()
+df = user.house.get_data()
 
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
-
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+fig = px.bar(df, x=df.index, y="usage")
 
 app.layout = html.Div(children=[
     html.H1(children='Hello Dash'),
