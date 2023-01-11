@@ -1,7 +1,5 @@
 import sqlite3
 from db_classes import House
-from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-import os
 from db_classes import PassFunc
 
 class User:
