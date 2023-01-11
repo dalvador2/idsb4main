@@ -21,6 +21,7 @@ class User:
     @classmethod
     def gen_from_password(cls,uname,password, house_id):
         salt, passhash = PassFunc.genhashsalt(password)
+        del password
         return cls(uname, salt, passhash, house_id)
     
 
