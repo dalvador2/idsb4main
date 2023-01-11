@@ -1,15 +1,15 @@
 import sqlite3
-from db_classes import House
-from db_classes import PassFunc
+from .house import House
+from .crypt_lib import PassFunc
 
 class User:
     DBNAME = "isdp4.db"
 
     @classmethod
-    def get_from_db(cls,uid):
+    def get_from_db(cls,uname):
         with sqlite3.connect(House.DBNAME) as conn:
             curr = conn.cursor()
-            curr.execute(f"SELECT * FROM users WHERE uid={int(uid)}")
+            curr.execute(f"SELECT * FROM users WHERE uid='{uname}'")
             values = curr.fetchone()
             conn.commit()
         retcls = cls(*values[1:])
@@ -35,12 +35,11 @@ class User:
     def enroll_to_db(self):
         with sqlite3.connect(User.DBNAME) as conn:
             curr = conn.cursor()
-            curr.execute(f"""INSERT INTO users
+            curr.execute("""INSERT INTO users
                         (uname, 
                         salt, 
                         passhash,
                         house_id)
-                        VALUES ({self.uname},
-                        {self.salt},
-                        "{self.passhash}",
-                        {self.house_id})""")
+                        VALUES (?,?,?,?)""",(self.uname, self.salt, self.passhash, self.house_id))
+            conn.commit()
+        
