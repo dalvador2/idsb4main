@@ -1,5 +1,9 @@
 import sqlite3
 from house import House
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+import os
+from crypt_lib import PassFunc
+
 class User:
     DBNAME = "isdp4.db"
 
@@ -13,6 +17,11 @@ class User:
         retcls = cls(*values[1:])
         retcls.house_id = values[0]
         return retcls
+    
+    @classmethod
+    def gen_from_password(cls,uname,password, house_id):
+        salt, passhash = PassFunc.genhashsalt(password)
+        return cls(uname, salt, passhash, house_id)
     
 
     def __init__(self,uname, salt, passhash, house_id) -> None:
