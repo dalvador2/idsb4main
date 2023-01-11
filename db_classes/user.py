@@ -32,6 +32,9 @@ class User:
     def get_house(self):
         self.house = House.get_from_db(self.house_id)
     
+    def verify_password(self,password):
+        return PassFunc.verify(self.salt, self.passhash, password)
+    
     def enroll_to_db(self):
         with sqlite3.connect(User.DBNAME) as conn:
             curr = conn.cursor()
