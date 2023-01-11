@@ -1,7 +1,7 @@
-# Run this app with `python app.py` and
-# visit http://127.0.0.1:8050/ in your web browser.
+
 
 from dash import Dash, html, dcc
+from dash.dependencies import Input, Output, State
 import plotly.express as px
 import pandas as pd
 import flask
@@ -23,12 +23,22 @@ app.layout = html.Div(children=[
     html.Div(children='''
         Dash: A web application framework for your data.
     '''),
-
+    dcc.Input(id="user_input", type="text", placeholder="Username"),
+    html.Button("Log in", id = "submit_button", n_clicks=0),
     dcc.Graph(
-        id='example-graph',
+        id='Usage',
         figure=fig
     )
 ])
+@app.callback(Output(component_id="Usage", component_property= "figure"),
+    Input(component_id="submit_button", component_property="n_clicks"),
+    State(component_id="user_input",component_property="value"))
+def update_usage(_,user_name):
+    user = db_classes.User.get_from_db(user_name)
+    user.get_house()
+    df = user.house.get_data()
+    fig = px.bar(df, x=df.index, y="usage")
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
