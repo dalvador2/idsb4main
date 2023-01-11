@@ -35,8 +35,9 @@ class House:
             conn.commit()
     def get_data(self):
         with sqlite3.connect(House.DBNAME) as conn:
-            curr = conn.cursor()
-            return pd.read_sql_query(f"SELECT * FROM usage WHERE house_id={self.house_id}",curr)
+            df = pd.read_sql_query(f"SELECT * FROM usage WHERE house_id={self.house_id}",conn)
+            df.set_index("datetime", inplace=True)
+            return df
 
 
     

@@ -9,7 +9,7 @@ class User:
     def get_from_db(cls,uname):
         with sqlite3.connect(House.DBNAME) as conn:
             curr = conn.cursor()
-            curr.execute(f"SELECT * FROM users WHERE uid='{uname}'")
+            curr.execute(f"SELECT * FROM users WHERE uname='{uname}'")
             values = curr.fetchone()
             conn.commit()
         retcls = cls(*values[1:])
