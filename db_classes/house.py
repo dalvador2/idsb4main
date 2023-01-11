@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 
 class House:
     DBNAME = "isdp4.db"
@@ -32,6 +33,10 @@ class House:
                         "{self.address}",
                         {self.level})""")
             conn.commit()
+    def get_data(self):
+        with sqlite3.connect(House.DBNAME) as conn:
+            curr = conn.cursor()
+            return pd.read_sql_query(f"SELECT * FROM usage WHERE house_id={self.house_id}",curr)
 
 
     
