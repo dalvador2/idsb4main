@@ -1,8 +1,8 @@
 import sqlite3
-from house import House
+from db_classes import House
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 import os
-from crypt_lib import PassFunc
+from db_classes import PassFunc
 
 class User:
     DBNAME = "isdp4.db"
