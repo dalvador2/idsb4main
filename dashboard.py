@@ -43,11 +43,17 @@ app.layout = html.Div(children=[
     State(component_id="password_input", component_property="value"))
 def update_usage(_,user_name, password):
     user = db_classes.User.get_from_db(user_name)
-    user.get_house()
-    df = user.house.get_data()
-    fig1 = px.bar(df, x=df.index, y="usage")
-    fig2 = px.bar(df, x=df.index, y = "generation")
-    return fig1, fig2
+    if user.verify_password(password):
+        user.get_house()
+        df = user.house.get_data()
+        fig1 = px.bar(df, x=df.index, y="usage")
+        fig2 = px.bar(df, x=df.index, y = "generation")
+        return fig1, fig2
+    else:
+        df = pd.DataFrame(data=None, columns= ["usage","generation","house_id"])
+        fig1 = px.bar(df, x=df.index, y="usage")
+        fig2 = px.bar(df, x=df.index, y = "generation")
+        return fig1, fig2
 
 if __name__ == '__main__':
     app.run_server(debug=True)
