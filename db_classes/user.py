@@ -13,7 +13,7 @@ class User:
             values = curr.fetchone()
             conn.commit()
         retcls = cls(*values[1:])
-        retcls.house_id = values[0]
+        retcls.user_id = values[0]
         return retcls
     
     @classmethod
