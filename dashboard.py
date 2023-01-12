@@ -11,18 +11,15 @@ server = flask.Flask(__name__)
 
 app = Dash(__name__, server= server)
 
-user = db_classes.User.get_from_db("torin")
-user.get_house()
-df = user.house.get_data()
-
+df = pd.DataFrame(data=None, columns= ["usage","generation","house_id"])
 fig1 = px.bar(df, x=df.index, y="usage")
-fig2 = px.bar(df,x=df.index, y="generation")
+fig2 = px.bar(df, x=df.index, y = "generation")
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+    html.H1(children='EcoHome'),
 
     html.Div(children='''
-        Dash: A web application framework for your data.
+        Helping you to save the planet
     '''),
     dcc.Input(id="user_input", type="text", placeholder="Username"),
     dcc.Input(id="password_input", type="password", placeholder="Password"),

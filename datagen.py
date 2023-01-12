@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import sqlite3
 from random import gauss
-house = 2
+house = 3
 INSERT_COMMAND = "INSERT INTO usage values (?,?,?,?)"
 ts = datetime.now()-timedelta(100)
 with sqlite3.connect("isdp4.db") as conn:
