@@ -15,9 +15,14 @@ app = Dash(__name__, server= server, use_pages=True)
 
 app.layout = html.Div(children=[
     html.Div(children=
-    [html.Div(dcc.Link(f"{page['name']}", href=page["relative_path"]))
+    [html.Div(dcc.Link(html.Div(f"{page['name']}"),href=page["relative_path"],className="navintbox"),className="navbox")
     for page in dash.page_registry.values()],
-    style = {"display":"flex","flex-direction":"row"}),
+    className="navbar"),
+    html.Div(children=[
+        dcc.Input(id="user_input", type="text", placeholder="Username"),
+        dcc.Input(id="password_input", type="password", placeholder="Password"),
+        html.Button("Log in", id = "submit_button", n_clicks=0)
+    ],className="login"),
     dash.page_container
 ])
         

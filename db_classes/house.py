@@ -1,15 +1,27 @@
 import sqlite3
 import pandas as pd
+from .errors import *
 
 class House:
     DBNAME = "isdp4.db"
     @classmethod
-    def get_from_db(cls,house_id):
-        with sqlite3.connect(House.DBNAME) as conn:
-            curr = conn.cursor()
-            curr.execute(f"SELECT * FROM houses WHERE house_id={int(house_id)}")
-            values = curr.fetchone()
-            conn.commit()
+    def get_from_db(cls,house_id = None, house_address = None):
+        if house_id is None and house_address is None:
+            raise RecordError
+        elif house_id is None:
+            with sqlite3.connect(House.DBNAME) as conn:
+                curr = conn.cursor()
+                curr.execute(f"SELECT * FROM houses WHERE address={house_address}")
+                values = curr.fetchone()
+                conn.commit()
+        else:
+            with sqlite3.connect(House.DBNAME) as conn:
+                curr = conn.cursor()
+                curr.execute(f"SELECT * FROM houses WHERE house_id={int(house_id)}")
+                values = curr.fetchone()
+                conn.commit()
+        if values is None:
+            raise PresenceError
         retcls = cls(*values[1:])
         retcls.house_id = values[0]
         return retcls

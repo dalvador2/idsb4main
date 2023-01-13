@@ -1,0 +1,19 @@
+.navbar{
+    display: flex;
+    flex-direction: row;
+    margin: 12px;
+}
+.navbox{
+    flex: 1;
+    background-color: greenyellow;
+    text-align: center;
+    font-size: 30pt;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    outline: solid;
+    outline-width: 5px;
+    outline-color: green;
+}
+.login{
+    margin-left: 12px;
+    margin-bottom: 12px;
+}
