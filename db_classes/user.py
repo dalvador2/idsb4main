@@ -1,6 +1,7 @@
 import sqlite3
 from .house import House
 from .crypt_lib import PassFunc
+from .errors import *
 
 class User:
     DBNAME = "isdp4.db"
@@ -11,6 +12,8 @@ class User:
             curr = conn.cursor()
             curr.execute(f"SELECT * FROM users WHERE uname='{uname}'")
             values = curr.fetchone()
+            if values == None:
+                raise PresenceError
             conn.commit()
         retcls = cls(*values[1:])
         retcls.user_id = values[0]

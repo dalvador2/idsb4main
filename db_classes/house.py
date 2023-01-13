@@ -14,11 +14,12 @@ class House:
         retcls.house_id = values[0]
         return retcls
     
-    def __init__(self,square_meter, occupants, address, level) -> None:
+    def __init__(self,square_meter, occupants, address, level, score) -> None:
         self.square_meter = square_meter
         self.occupants = occupants
         self.address = address
         self.level = level
+        self.score = score
     
     def enroll_into_db(self):
         with sqlite3.connect(House.DBNAME) as conn:

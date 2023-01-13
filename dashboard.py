@@ -1,7 +1,6 @@
 
 
-from dash import Dash, html, dcc
-from dash.dependencies import Input, Output, State
+from dash import Dash, html, dcc, Input, Output, State, callback
 import plotly.express as px
 import pandas as pd
 import flask
@@ -33,13 +32,21 @@ app.layout = html.Div(children=[
         figure=fig2
     )
 ])
-@app.callback(Output(component_id="Usage", component_property= "figure"),
+@callback(Output(component_id="Usage", component_property= "figure"),
     Output(component_id="generation", component_property="figure"),
     Input(component_id="submit_button", component_property="n_clicks"),
     State(component_id="user_input",component_property="value"),
     State(component_id="password_input", component_property="value"))
 def update_usage(_,user_name, password):
-    user = db_classes.User.get_from_db(user_name)
+    def return_blank():
+        df = pd.DataFrame(data=None, columns= ["usage","generation","house_id"])
+        fig1 = px.bar(df, x=df.index, y="usage")
+        fig2 = px.bar(df, x=df.index, y = "generation")
+        return fig1, fig2
+    try:
+        user = db_classes.User.get_from_db(user_name)
+    except db_classes.PresenceError:
+        return return_blank()
     if user.verify_password(password):
         user.get_house()
         df = user.house.get_data()
@@ -47,10 +54,8 @@ def update_usage(_,user_name, password):
         fig2 = px.bar(df, x=df.index, y = "generation")
         return fig1, fig2
     else:
-        df = pd.DataFrame(data=None, columns= ["usage","generation","house_id"])
-        fig1 = px.bar(df, x=df.index, y="usage")
-        fig2 = px.bar(df, x=df.index, y = "generation")
-        return fig1, fig2
+        return return_blank()
+        
 
 if __name__ == '__main__':
     app.run_server(debug=True)
