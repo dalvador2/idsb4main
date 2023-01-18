@@ -38,7 +38,7 @@ class ScoreUtils:
         return (generation-usage)/np.sqrt(np.sqrt(occupants*square_meter))
         
     @classmethod
-    def Update_worlds(cls):
+    def update_worlds(cls):
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
             df.set_index("house_id",inplace = True)
@@ -50,3 +50,15 @@ class ScoreUtils:
             curr = conn.cursor()
             curr.executemany(update_query,record_list)
             conn.commit()
+    @classmethod
+    def leaderboard(cls,house_id):
+        with sqlite3.connect(ScoreUtils.DBNAME) as conn:
+            df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
+        df.sort_values(by="score", inplace=True)
+        df.reset_index(drop=True, inplace=True)
+        top = df.iloc[range(3)]
+        me = df.loc[df["house_id"] == house_id]
+        idx = me.index[0]
+        around = df.iloc[range(idx-1,idx+2)]
+        ldb = top.append(around)
+        return ldb

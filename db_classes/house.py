@@ -3,6 +3,7 @@ import pandas as pd
 from math import sqrt
 from .errors import *
 from .consts import Consts
+from .score_gen import ScoreUtils
 
 class House:
     DBNAME = Consts.DBNAME
@@ -35,6 +36,16 @@ class House:
         self.level = level
         self.score = score
     
+    def update_from_db(self):
+        with sqlite3.connect(House.DBNAME) as conn:
+            curr = conn.cursor()
+            curr.execute(f"SELECT * FROM houses WHERE house_id={int(self.house_id)}")
+            values = curr.fetchone()
+            conn.commit()
+        if values is None:
+            raise PresenceError
+        self.__init__(*values[1:])
+            
     def enroll_into_db(self):
         with sqlite3.connect(House.DBNAME) as conn:
             curr = conn.cursor()
@@ -55,7 +66,11 @@ class House:
             return df
     
     def leaderboard(self):
-        self.get_data()
+        ScoreUtils.calc_score()
+        ScoreUtils.update_worlds()
+        self.update_from_db()
+        return ScoreUtils.leaderboard(self.house_id)
+
 
 
     
