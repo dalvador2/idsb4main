@@ -30,9 +30,10 @@ layout = html.Div(children=[
     State(component_id="house_check",component_property="value")
 )
 def enroller(n_clicks,uname,password,address,occupants,floor_area,house_check):
+    checked = ['Check if adding user to already enrolled house']
     if uname is None:
         return "waiting"
-    house_check = (house_check is ["Check if adding user to already enrolled house"])
+    house_check = (house_check == checked)
     x = db_classes.User.gen_from_password(uname,password,None)
     if house_check:
         x.get_house(address)

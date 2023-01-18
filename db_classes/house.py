@@ -1,9 +1,11 @@
 import sqlite3
 import pandas as pd
+from math import sqrt
 from .errors import *
+from .consts import Consts
 
 class House:
-    DBNAME = "isdp4.db"
+    DBNAME = Consts.DBNAME
     @classmethod
     def get_from_db(cls,house_id = None, house_address = None):
         if house_id is None and house_address is None:
@@ -51,6 +53,9 @@ class House:
             df = pd.read_sql_query(f"SELECT * FROM usage WHERE house_id={self.house_id}",conn)
             df.set_index("datetime", inplace=True)
             return df
+    
+    def leaderboard(self):
+        self.get_data()
 
 
     

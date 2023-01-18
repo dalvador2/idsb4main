@@ -2,9 +2,10 @@ import sqlite3
 from .house import House
 from .crypt_lib import PassFunc
 from .errors import *
+from .consts import Consts
 
 class User:
-    DBNAME = "isdp4.db"
+    DBNAME = Consts.DBNAME
 
     @classmethod
     def get_from_db(cls,uname):
