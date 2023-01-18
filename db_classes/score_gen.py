@@ -42,5 +42,11 @@ class ScoreUtils:
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
             df.set_index("house_id",inplace = True)
-        bins = pd.qcut(df["score"],5)
-        print(df)
+        df["level"] = pd.qcut(df["score"],5, labels=range(1,6))
+        df.fillna(0,inplace=True)
+        record_list = zip(list(df["level"]),list(df.index))
+        with sqlite3.connect(ScoreUtils.DBNAME) as conn:
+            update_query = "UPDATE houses set level = ? where house_id = ?"
+            curr = conn.cursor()
+            curr.executemany(update_query,record_list)
+            conn.commit()
