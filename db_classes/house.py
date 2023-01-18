@@ -11,7 +11,7 @@ class House:
         elif house_id is None:
             with sqlite3.connect(House.DBNAME) as conn:
                 curr = conn.cursor()
-                curr.execute(f"SELECT * FROM houses WHERE address={house_address}")
+                curr.execute(f"SELECT * FROM houses WHERE address='{house_address}'")
                 values = curr.fetchone()
                 conn.commit()
         else:
@@ -26,7 +26,7 @@ class House:
         retcls.house_id = values[0]
         return retcls
     
-    def __init__(self,square_meter, occupants, address, level, score) -> None:
+    def __init__(self,square_meter, occupants, address, level=0, score=0) -> None:
         self.square_meter = square_meter
         self.occupants = occupants
         self.address = address

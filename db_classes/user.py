@@ -32,8 +32,12 @@ class User:
         self.passhash = passhash
         self.house_id = house_id
     
-    def get_house(self):
-        self.house = House.get_from_db(self.house_id)
+    def get_house(self, address=None):
+        if address == None:
+            self.house = House.get_from_db(self.house_id)
+        else:
+            self.house = House.get_from_db(None,address)
+            self.house_id = self.house.house_id
     
     def verify_password(self,password):
         return PassFunc.verify(self.salt, self.passhash, password)
