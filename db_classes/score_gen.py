@@ -39,10 +39,11 @@ class ScoreUtils:
         
     @classmethod
     def update_worlds(cls):
+        n_worlds = 3;
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
             df.set_index("house_id",inplace = True)
-        df["level"] = pd.qcut(df["score"],5, labels=range(1,6))
+        df["level"] = pd.qcut(df["score"],n_worlds, labels=range(1,n_worlds+1))
         df.fillna(0,inplace=True)
         record_list = zip(list(df["level"]),list(df.index))
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
