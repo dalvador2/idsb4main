@@ -16,6 +16,7 @@ layout = html.Div(children=[
     dcc.Input(id="occupants",type="text", placeholder="occupants"),html.P(),
     dcc.Input(id="floor_area", type="text", placeholder="Floor Area in m^2"),
     html.Button("Submit",id="go_button", n_clicks=0),
+    dcc.Checklist(["Populate me with random data"],id="populate_check"),
     html.H3(children = "sorted", id="conformation")
 
 ])
@@ -27,21 +28,26 @@ layout = html.Div(children=[
     State(component_id="address",component_property="value"),
     State(component_id="occupants",component_property="value"),
     State(component_id="floor_area",component_property="value"),
-    State(component_id="house_check",component_property="value")
+    State(component_id="house_check",component_property="value"),
+    State(component_id="populate_check", component_property="value")
 )
-def enroller(n_clicks,uname,password,address,occupants,floor_area,house_check):
+def enroller(n_clicks,uname,password,address,occupants,floor_area,house_check, populate_check):
     checked = ['Check if adding user to already enrolled house']
+    p_check = ["Populate me with random data"]
     if uname is None:
         return "waiting"
     house_check = (house_check == checked)
+    populate_check = (populate_check == p_check)
     x = db_classes.User.gen_from_password(uname,password,None)
     if house_check:
         x.get_house(address)
         x.enroll_to_db()
+        db_classes.data_gen(x.house_id)
         return "Done"
     else:
         h = db_classes.House(floor_area, occupants,address)
         h.enroll_into_db()
         x.get_house(address)
         x.enroll_to_db()
+        db_classes.data_gen(x.house_id)
         return "Done"

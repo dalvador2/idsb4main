@@ -7,7 +7,7 @@ import numpy as np
 class ScoreUtils:
     DBNAME = Consts.DBNAME
     @classmethod
-    def Update_scores(cls, score_window_size = 30):
+    def update_scores(cls, score_window_size = 30):
 
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query(f"SELECT * FROM usage;",conn)
@@ -22,8 +22,6 @@ class ScoreUtils:
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query(f"SELECT house_id,square_meter,occupants FROM houses WHERE house_id IN {sel_house};",conn)
             df.set_index("house_id", inplace=True)
-        print(df)
-        print(totals)
         totals= pd.merge(totals, df, left_index=True, right_index=True)
         totals["score"] = ScoreUtils.calc_score(totals["occupants"], totals["square_meter"],totals["usage"],totals["generation"])
         record_list = zip(list(totals["score"]),list(totals.index))
@@ -39,12 +37,14 @@ class ScoreUtils:
         
     @classmethod
     def update_worlds(cls):
-        n_worlds = 3;
+        n_worlds = 5
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
             df.set_index("house_id",inplace = True)
         df["level"] = pd.qcut(df["score"],n_worlds, labels=range(1,n_worlds+1))
-        df.fillna(0,inplace=True)
+        df["level"] = df["level"].astype(np.float64)
+        df.fillna(0, inplace=True)
+        df.level = df.level.astype(np.int64)
         record_list = zip(list(df["level"]),list(df.index))
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
             update_query = "UPDATE houses set level = ? where house_id = ?"
@@ -52,9 +52,11 @@ class ScoreUtils:
             curr.executemany(update_query,record_list)
             conn.commit()
     @classmethod
-    def leaderboard(cls,house_id):
+    def leaderboard(cls,house_id) -> pd.DataFrame:
+        ScoreUtils.update_scores()
+        ScoreUtils.update_worlds()
         with sqlite3.connect(ScoreUtils.DBNAME) as conn:
-            df = pd.read_sql_query("SELECT house_id, score FROM houses",conn)
+            df = pd.read_sql_query("SELECT house_id, address, score FROM houses",conn)
         df.sort_values(by="score", inplace=True)
         df.reset_index(drop=True, inplace=True)
         top = df.iloc[range(3)]
@@ -62,4 +64,5 @@ class ScoreUtils:
         idx = me.index[0]
         around = df.iloc[range(idx-1,idx+2)]
         ldb = top.append(around)
+        ldb.index = ldb.index + 1
         return ldb
