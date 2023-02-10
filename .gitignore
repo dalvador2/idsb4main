@@ -1,3 +1,4 @@
 certs/
 __pycache__/
 isdp4.db
+.vscode/
