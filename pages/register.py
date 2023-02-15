@@ -38,16 +38,19 @@ def enroller(n_clicks,uname,password,address,occupants,floor_area,house_check, p
         return "waiting"
     house_check = (house_check == checked)
     populate_check = (populate_check == p_check)
+    print(populate_check)
     x = db_classes.User.gen_from_password(uname,password,None)
     if house_check:
         x.get_house(address)
         x.enroll_to_db()
-        db_classes.data_gen(x.house_id)
+        if populate_check:
+            db_classes.data_gen(x.house_id)
         return "Done"
     else:
         h = db_classes.House(floor_area, occupants,address)
         h.enroll_into_db()
         x.get_house(address)
         x.enroll_to_db()
-        db_classes.data_gen(x.house_id)
+        if populate_check:
+            db_classes.data_gen(x.house_id)
         return "Done"
